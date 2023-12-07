@@ -1,5 +1,4 @@
 from collections import Counter
-from functools import cmp_to_key
 from aoc import read_input
 
 lines = read_input()
@@ -35,48 +34,27 @@ def get_type(h):
             mc, _ = c.most_common()[0]
             c[mc] += j_count
 
-    if len(c) == 1:
-        return 7
-    if len(c) == 2:
-        if 4 in c.values():
+    match sorted(c.values()):
+        case [5]:
+            return 7
+        case [1, 4]:
             return 6
-        if 3 in c.values():
+        case [2, 3]:
             return 5
-    if 3 in c.values():
-        return 4
-
-    if 2 in c.values():
-        num_pairs = 0
-        for v in c.values():
-            if v == 2:
-                num_pairs += 1
-        if num_pairs == 2:
+        case [1, 1, 3]:
+            return 4
+        case [1, 2, 2]:
             return 3
-        else:
+        case [1, 1, 1, 2]:
             return 2
-
-    return 1
-
-
-def cmp(hb1, hb2):
-    h1 = hb1[0]
-    h2 = hb2[0]
-
-    t1 = get_type(h1)
-    t2 = get_type(h2)
-
-    if t1 > t2:
-        return 1
-    elif t2 > t1:
-        return -1
-
-    for c1, c2 in zip(h1, h2):
-        if scores[c1] > scores[c2]:
+        case _:
             return 1
-        elif scores[c2] > scores[c1]:
-            return -1
 
-    return 0
+
+def key(hb):
+    h = hb[0]
+    t = get_type(h)
+    return [t] + [scores[c] for c in h]
 
 
 hand_bids = []
@@ -87,7 +65,7 @@ for hand in lines:
 
 
 def get_winnings(hand_bids):
-    in_order = sorted(hand_bids, key=cmp_to_key(cmp))
+    in_order = sorted(hand_bids, key=key)
     total = 0
     rank = 1
     for _, bid in in_order:
