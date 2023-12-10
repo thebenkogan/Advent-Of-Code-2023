@@ -18,12 +18,11 @@ def in_bounds(a, b):
     return lambda c: 0 <= c[0] < a and 0 <= c[1] < b
 
 
-# a = deque()
-# b = set()
+# queue = deque()
+# seen = set()
 
-
-# def bfs(queue, seen):
-#     elt = a.popleft()
+# while len(queue) > 0:
+#     elt = queue.popleft()
 #     for n in neighbors:
 #         if n not in seen:
 #             seen.add(n)

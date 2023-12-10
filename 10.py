@@ -99,15 +99,10 @@ for y, line in enumerate(lines):
                     adjs.append((x + dx, y + dy))
             adj2[(x, y)] = adjs
 
-insiders = set()  # nodes inside the cycle
 outsiders = set()  # nodes outside the cycle
 for y, line in enumerate(lines):
     for x, c in enumerate(line):
-        if (
-            (x, y) not in cycle_nodes
-            and (x, y) not in insiders
-            and (x, y) not in outsiders
-        ):
+        if (x, y) not in cycle_nodes and (x, y) not in outsiders:
             queue = deque()
             queue.append((x, y))
             seen = set([(x, y)])
@@ -121,13 +116,12 @@ for y, line in enumerate(lines):
                         seen.add(n)
                         queue.append(n)
 
-            if not outside_region:
-                insiders = insiders.union(seen)
-            else:
+            if outside_region:
                 outsiders = outsiders.union(seen)
-
-total = 0
-for p in insiders:
-    if is_original(p):
-        total += 1
-print(total)
+            else:
+                total = 0
+                for p in seen:
+                    if is_original(p):
+                        total += 1
+                print(total)
+                exit()
