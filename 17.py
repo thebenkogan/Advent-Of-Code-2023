@@ -1,4 +1,3 @@
-from collections import defaultdict
 from heapq import heappop, heappush
 from aoc import DIRS, in_bounds, read_input
 
@@ -21,15 +20,15 @@ for row, line in enumerate(lines):
 def get_min_loss(min_steps, max_steps):
     # heat loss, position, previous position, number of times moving in direction
     queue = [(0, (0, 0), (-1, -1), 0)]
-    weights = defaultdict(lambda: float("inf"))
-    weights[((0, 0), (-1, -1), 0)] = 0
     seen = set()
-    min_loss = float("inf")
     while len(queue) > 0:
         loss, pos, prev, num = heappop(queue)
         if pos == (len(lines[0]) - 1, len(lines) - 1):
-            min_loss = min(min_loss, loss)
-        seen.add((pos, prev, num))
+            return loss
+        if (pos, prev, num) in seen:
+            continue
+        else:
+            seen.add((pos, prev, num))
         dx, dy = pos[0] - prev[0], pos[1] - prev[1]
         for n, w in adj[pos]:
             if n == prev:
@@ -40,12 +39,7 @@ def get_min_loss(min_steps, max_steps):
             next_num = num + 1 if same_dir else 1
             if (n, pos, next_num) in seen:
                 continue
-            next_loss = loss + w
-            if next_loss < weights[(n, pos, next_num)]:
-                weights[(n, pos, next_num)] = next_loss
-                heappush(queue, (next_loss, n, pos, next_num))
-
-    return min_loss
+            heappush(queue, (loss + w, n, pos, next_num))
 
 
 print(get_min_loss(1, 3))
